@@ -1,0 +1,133 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Paleta "Night and sky blue" (oscura) con estados rojo/ámbar/verde. Valores en canales RGB
+   para que Tailwind pueda aplicar opacidad: rgb(var(--ink) / 0.5). */
+:root {
+  --bg: 10 13 20;
+  --surface: 19 24 36;
+  --raised: 27 34 50;
+  --line: 42 50 66;
+  --ink: 233 237 243;
+  --muted: 136 145 161;
+  --accent: 90 185 252;
+  --accent-ink: 6 18 31;
+  --ok: 69 192 138;
+  --warn: 224 163 60;
+  --danger: 240 97 109;
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+
+  color-scheme: dark;
+  accent-color: rgb(var(--accent));
+}
+
+@layer base {
+  html {
+    background-color: rgb(var(--bg));
+  }
+
+  body {
+    @apply bg-fondo text-tinta font-sans antialiased;
+    font-size: 15px;
+  }
+
+  /* Superficies del navegador tematizadas desde la paleta. */
+  ::selection {
+    background-color: rgb(var(--accent) / 0.3);
+    color: rgb(var(--ink));
+  }
+
+  :focus-visible {
+    outline: 2px solid rgb(var(--accent));
+    outline-offset: 2px;
+  }
+
+  * {
+    scrollbar-color: rgb(var(--line)) transparent;
+    scrollbar-width: thin;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply text-balance;
+  }
+}
+
+@layer components {
+  /* Caja base: una sola receta de panel en toda la app. */
+  .panel {
+    @apply rounded-lg border border-linea bg-superficie;
+  }
+
+  .etiqueta {
+    @apply text-sm font-medium text-apagado;
+  }
+
+  /* Un solo estilo de botón, en dos tamaños de alto cómodo para el dedo (44 px). */
+  .boton {
+    @apply inline-flex min-h-[44px] items-center justify-center gap-2 rounded border border-linea
+           bg-elevado px-4 text-sm font-medium text-tinta transition-colors duration-150;
+  }
+
+  .boton:hover {
+    @apply border-apagado;
+  }
+
+  .boton[aria-pressed='true'],
+  .boton[data-activo='true'] {
+    @apply border-acento bg-acento text-acento-tinta;
+  }
+
+  .boton:disabled {
+    @apply cursor-not-allowed border-linea bg-superficie text-apagado;
+  }
+}
+
+/* El movimiento comunica estado; con prefers-reduced-motion se queda solo el color. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Imprimir la pestaña Partido: hoja de protección en papel, fondo blanco y sin controles. */
+@media print {
+  :root {
+    --bg: 255 255 255;
+    --surface: 255 255 255;
+    --raised: 255 255 255;
+    --line: 180 186 196;
+    --ink: 17 17 17;
+    --muted: 85 90 98;
+    --accent: 20 70 140;
+    --accent-ink: 255 255 255;
+    --ok: 20 110 75;
+    --warn: 150 95 10;
+    --danger: 170 25 40;
+  }
+
+  body {
+    font-size: 12px;
+  }
+
+  [data-print='ocultar'] {
+    display: none !important;
+  }
+
+  .panel {
+    border-color: rgb(var(--line));
+    break-inside: avoid;
+  }
+
+  @page {
+    margin: 12mm;
+  }
+}

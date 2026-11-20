@@ -349,9 +349,10 @@ def _repeticion(g: pd.DataFrame, star: int, posiciones: pd.DataFrame, nombre) ->
     y = np.round((f["y"].to_numpy("float64") - float(jug["y0"])) * s, 2)
     rol = np.where((f["rol"].to_numpy() == "R") & (f["nflId"].to_numpy() == star), "E", f["rol"].to_numpy())
     orden = {"Q": 0, "B": 1, "R": 2, "E": 3}
-    tabla = pd.DataFrame({"frame": f["frameId"].to_numpy(), "rol": rol, "x": x, "y": y})
+    tabla = pd.DataFrame({"frame": f["frameId"].to_numpy(), "rol": rol, "x": x, "y": y, "id": f["nflId"].to_numpy()})
     tabla["_o"] = tabla["rol"].map(orden)
-    tabla = tabla.sort_values(["frame", "_o", "x", "y"])
+    # Orden estable por jugador: la posición i de cada frame es siempre el mismo jugador (lo necesita la animación).
+    tabla = tabla.sort_values(["frame", "_o", "id"])
     frames = [
         [{"rol": str(r), "x": float(a), "y": float(b)} for r, a, b in zip(t["rol"], t["x"], t["y"])]
         for _, t in tabla.groupby("frame", sort=True)
