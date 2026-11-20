@@ -319,10 +319,11 @@ def _estrella(g: pd.DataFrame, star: int, roles: pd.DataFrame, nombre) -> dict:
     con = np.isin(_claves_jugada(g), _claves_jugada(rush))
 
     def grupo(sub: pd.DataFrame) -> dict | None:
-        if len(sub) < MIN_JUGADAS:
+        # null si hay menos de 20 jugadas o si su presión nunca llega al 15% (sin tiempo seguro no hay dato).
+        ts = _ts_frames(sub["reloj_f"]) if len(sub) >= MIN_JUGADAS else None
+        if ts is None:
             return None
-        return {"tiempo_seguro_s": _seg(_ts_frames(sub["reloj_f"])), "presion_pct": _pct(_media(sub["presion"])),
-                "n": int(len(sub))}
+        return {"tiempo_seguro_s": _seg(ts), "presion_pct": _pct(_media(sub["presion"])), "n": int(len(sub))}
 
     return {"nombre": nombre(star), "con": grupo(g.loc[con]), "sin": grupo(g.loc[~con])}
 
